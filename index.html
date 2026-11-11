@@ -4,145 +4,21 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>KeyForge — Password &amp; Passphrase Generator</title>
-<meta name="description" content="Free, offline password and passphrase generator. Runs entirely in your browser — nothing is sent anywhere." />
-<style>
-  :root {
-    --bg: #0d1117;
-    --card: #161b22;
-    --border: #30363d;
-    --text: #e6edf3;
-    --muted: #8b949e;
-    --accent: #58a6ff;
-    --good: #3fb950;
-    --warn: #d29922;
-    --bad: #f85149;
-    font-size: 16px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  }
-  main {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2rem;
-    width: 100%;
-    max-width: 560px;
-  }
-  h1 { font-size: 1.4rem; margin-bottom: .25rem; }
-  .tagline { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
-  .tabs {
-    display: flex;
-    gap: .5rem;
-    margin-bottom: 1.25rem;
-  }
-  .tabs button {
-    flex: 1;
-    padding: .5rem;
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: .95rem;
-  }
-  .tabs button.active {
-    color: var(--text);
-    border-color: var(--accent);
-    background: rgba(88, 166, 255, .12);
-  }
-  .output-row {
-    display: flex;
-    gap: .5rem;
-    align-items: stretch;
-    margin-bottom: .5rem;
-  }
-  #output {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: .8rem 1rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 1.05rem;
-    word-break: break-all;
-    min-height: 3.4rem;
-    display: flex;
-    align-items: center;
-  }
-  #copyBtn {
-    background: var(--accent);
-    color: #0d1117;
-    border: none;
-    border-radius: 8px;
-    padding: 0 1.1rem;
-    font-weight: 600;
-    font-size: .95rem;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  #copyBtn.copied { background: var(--good); }
-  .strength-bar {
-    height: 6px;
-    border-radius: 3px;
-    background: var(--border);
-    margin-bottom: .35rem;
-    overflow: hidden;
-  }
-  .strength-bar > div { height: 100%; width: 0%; transition: width .25s, background .25s; }
-  .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: .85rem; margin-bottom: 1.5rem; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .controls { display: grid; grid-template-columns: 1fr auto; gap: .75rem 1rem; align-items: center; }
-  .controls label { font-size: .9rem; color: var(--muted); }
-  .controls .value {
-    color: var(--text);
-    font-family: ui-monospace, monospace;
-    font-size: .9rem;
-    min-width: 3ch;
-    text-align: right;
-  }
-  input[type="range"] { width: 100%; accent-color: var(--accent); }
-  .check { display: flex; align-items: center; gap: .5rem; font-size: .9rem; color: var(--muted); }
-  .check input { accent-color: var(--accent); width: 1rem; height: 1rem; }
-  .sep { color: var(--muted); align-self: center; font-size: .9rem; }
-  #regenBtn {
-    width: 100%;
-    margin-top: 1.5rem;
-    padding: .7rem;
-    background: rgba(88, 166, 255, .12);
-    color: var(--accent);
-    border: 1px solid var(--accent);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  #regenBtn:hover { background: rgba(88, 166, 255, .2); }
-  footer {
-    margin-top: 1.25rem;
-    color: var(--muted);
-    font-size: .78rem;
-    text-align: center;
-  }
-</style>
+<meta name="description" content="Free, offline password, passphrase and PIN generator. Runs entirely in your browser — nothing is sent anywhere." />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <main>
-  <h1>KeyForge</h1>
+  <div class="top-row">
+    <h1>KeyForge</h1>
+    <button id="themeBtn" type="button" title="Toggle light/dark theme">☀️</button>
+  </div>
   <p class="tagline">Runs 100% offline in your browser. Nothing is stored or transmitted.</p>
 
   <div class="tabs" role="tablist">
     <button id="tabPassword" class="active" role="tab">Password</button>
     <button id="tabPhrase" role="tab">Passphrase</button>
+    <button id="tabPin" role="tab">PIN</button>
   </div>
 
   <div class="output-row">
@@ -184,140 +60,28 @@
     </div>
   </section>
 
+  <section id="panelPin" class="panel" aria-label="PIN options">
+    <div class="controls">
+      <label for="pinLen">Digits</label>
+      <input type="range" id="pinLen" min="4" max="12" value="6" />
+      <span></span><span class="value" id="pinLenVal">6</span>
+      <label class="check"><input type="checkbox" id="pinGroup" /> Group in fours (1234 5678)</label>
+    </div>
+  </section>
+
+  <div id="bulkWrap" class="bulk">
+    <div class="bulk-row">
+      <label for="bulkCount">Bulk generate</label>
+      <input type="number" id="bulkCount" min="1" max="100" value="10" />
+      <button id="bulkBtn" type="button">Generate list</button>
+      <button id="bulkCopyBtn" type="button">Copy all</button>
+    </div>
+    <div id="bulkOut" aria-live="polite"></div>
+  </div>
+
   <button id="regenBtn" type="button">↻ Generate new</button>
   <footer>Uses your browser's cryptographically secure random generator (Web Crypto API).</footer>
 </main>
-
-<script>
-"use strict";
-
-const WORDS = ["ability","absorb","acclaim","adapt","advice","affair","agent","airline","airport","alarm","album","alien","alpha","amber","anchor","angle","animal","answer","antenna","apple","april","archive","arctic","armor","arrow","artist","aspect","atlas","aurora","autumn","avocado","awake","bacon","badge","balance","bamboo","banana","banner","barn","basket","beacon","beam","beard","beast","bedroom","before","begin","behind","below","belt","bench","berlin","beyond","bicycle","binary","birch","bison","bitter","blade","blanket","blaze","blend","bless","blind","blossom","board","bobcat","boiler","border","borrow","bottle","bounce","bracket","branch","brave","breeze","bridge","bright","bronze","brook","brush","bubble","bucket","budget","buffalo","builder","bulb","bundle","bunker","burden","bureau","butter","cabin","cable","cactus","camera","canal","candle","canvas","canyon","capital","captain","carbon","cargo","carpet","carrot","castle","catalog","cattle","caution","cave","ceiling","celery","cement","census","center","cereal","chalk","champion","channel","chapter","charcoal","charm","chase","cheese","cherry","chess","chief","chili","chimney","chorus","cinema","circle","citrus","civic","clarity","classic","clever","cliff","climate","clock","closet","cloud","clover","cluster","coach","coastal","cobalt","cocoa","coffee","column","comet","comfort","command","compact","compass","concert","concrete","confirm","connect","consul","contact","context","control","convert","copper","coral","corner","corridor","cosmic","cotton","country","couple","courage","cousin","cover","coyote","cradle","crane","crater","crayon","crescent","cricket","crimson","crisp","crown","crystal","cumulus","cupcake","curious","current","curtain","curve","cycle","cypress","dagger","dahlia","dairy","damage","dancer","dawn","debut","decay","decimal","decorate","degree","delta","denim","deploy","desert","detail","detect","device","diagram","diamond","diary","diesel","dignity","dinner","dipper","direct","dispute","distance","divide","docker","dolphin","domain","donkey","donor","double","downtown","dragon","drama","dream","dress","drift","drum","duckling","dune","duplex","durian","dusk","eagle","early","earth","eastern","eclipse","economy","edible","editor","effect","effort","eight","elastic","elbow","elder","electric","elegant","element","elephant","elevator","elm","ember","emerald","emotion","empty","enamel","energy","engine","enough","enroll","ensure","entire","envelope","envoy","equal","equator","escape","essay","estate","eternal","ethics","evening","event","evolve","exact","example","exchange","excite","exclude","excuse","exercise","exotic","expand","expert","explore","export","expose","extra","fabric","factor","falcon","family","famous","fantasy","farm","fashion","father","favor","feather","fellow","female","fence","ferry","fiber","fiction","fiddle","field","fierce","figure","filter","finance","finding","fjord","flame","flamingo","flavor","fleet","flint","float","flock","florist","flour","flower","fluid","flute","focus","foggy","foliage","follow","fond","forest","formal","format","fortune","forward","fossil","foster","found","fourth","fox","fragile","frame","freedom","freeze","french","fresh","friend","fringe","frost","frozen","fuel","fujian","full","funnel","furnace","future","gadget","galaxy","gallery","gamble","garden","garlic","gather","gazebo","gecko","gem","general","gentle","genuine","geyser","ginger","giraffe","glacier","glide","global","gloss","glove","goggles","golden","gopher","gorge","gospel","govern","grain","granite","grape","grasp","grass","gravel","green","grocery","guitar","gully","habit","hail","hammock","harbor","harvest","hazel","heather","hedgehog","helmet","herald","herbs","herring","hidden","highland","history","hobby","hockey","holiday","hollow","honey","hoodie","horizon","horn","horse","hostel","hotel","hour","household","hover","human","humble","humor","hurdle","hybrid","iceberg","icon","ideal","igloo","ignite","image","imagine","impact","import","impress","index","indigo","indoor","infant","inform","inject","injury","inland","input","insect","inside","inspect","instant","invest","invite","iron","island","italic","ivory","jacket","jaguar","jargon","jasmine","jelly","jersey","jewel","jockey","jolly","journal","jubilee","judge","juggle","juice","jumbo","junction","junior","jupiter","kayak","kernel","kettle","keyboard","kidney","kind","kingdom","kitchen","kitten","kiwi","knight","koala","ladder","lagoon","lake","lantern","laptop","large","laser","latin","laughter","laundry","lavender","lawyer","layer","leader","ledger","legend","lemon","length","leopard","letter","level","liberty","library","license","life","light","lilac","lily","limber","linen","lion","liquid","listen","lively","lizard","llama","lobster","local","locate","locker","loft","logic","long","lookout","lovely","loyal","lucid","lumber","lunar","lunch","luxury","lyric","machine","macro","magenta","magic","magnet","mailbox","major","mammal","mandate","mango","mansion","maple","marble","margin","marina","market","marmor","marvel","mason","master","matrix","meadow","medal","medium","melody","melon","member","memory","mentor","menu","mercury","mercy","merit","merry","metal","meteor","method","middle","midnight","might","mild","military","milk","million","mimic","mineral","mingle","minor","mint","minute","miracle","mirror","mission","misty","mixture","mobile","model","modem","modern","modify","moisture","moment","monarch","monitor","monkey","monsoon","month","moral","morning","mortal","mosaic","moss","motel","motion","motor","mountain","mouse","movie","muffin","mulberry","mumble","muscle","museum","mushroom","music","mustard","mutual","myrtle","mystery","napkin","narrow","nation","native","natural","nautical","nearby","nebula","nectar","needle","neighbor","nerve","nest","network","neutral","never","newborn","night","nimble","ninja","nitrogen","noble","nomad","normal","north","notable","novel","nucleus","nugget","number","nutmeg","oasis","oatmeal","obtain","occupy","ocean","octagon","october","octopus","office","offset","olive","omega","onion","online","onward","opal","opera","opinion","opponent","optic","option","orange","orbit","orchard","orchid","organ","origin","ornate","orphan","osprey","ostrich","otter","ounce","outdoor","outer","output","outside","oval","overlap","owner","oxygen","oyster","pacific","packet","paddle","pagoda","paint","palace","pallet","palm","pancake","panda","panel","pantry","papaya","paper","parade","parcel","parent","parish","park","parsley","parrot","partner","party","passage","passion","pasta","pastel","pastry","patch","patent","path","patient","patio","patrol","pattern","pavilion","pay","peace","peach","peanut","pearl","pebble","pecan","pedal","pelican","pencil","penguin","pepper","perfect","perfume","permit","person","petal","phase","phoenix","phone","photo","phrase","physics","piano","picnic","picture","pigeon","pigment","pilgrim","pillar","pillow","pilot","pin","pine","pioneer","pipeline","pistol","piston","pitch","pivot","pixel","pizza","placid","planet","plank","plant","plasma","plate","plateau","player","plaza","pledge","plenty","plover","plum","plume","plunger","pocket","podium","poem","poet","point","polar","police","pollen","polygon","pony","poplar","poppy","porch","portal","portion","poster","potato","pottery","pouch","powder","power","praise","prairie","prayer","precious","predict","prefer","premier","premium","present","pressure","presto","pretty","prevent","preview","pride","primary","prime","prince","print","prism","private","prize","problem","process","prodigy","profile","program","project","prominent","prompt","proof","proper","propose","protect","proud","provide","public","pudding","pulley","pump","punchline","puppet","purple","purpose","puzzle","pyramid","quality","quantum","quarry","quart","queen","quest","quick","quiet","quilt","quinoa","quirky","quiver","quota","rabbit","raccoon","race","radar","radiant","radio","radish","rafter","ragtime","rail","rainbow","raisin","rally","ramble","random","ranger","rapid","rascal","raspberry","rather","raven","ravine","reactor","reader","realm","rebel","recipe","record","reduce","reef","reflect","reform","refuge","regard","region","relay","relic","remedy","remind","remote","render","renew","rental","repair","repeat","replace","reply","rescue","research","reserve","reside","resist","resolve","resort","retail","retina","return","reveal","review","revise","reward","rhythm","ribbon","rider","ridge","rifle","right","rigid","ripple","rising","risk","ritual","river","roast","robin","robot","rocket","rodeo","rogue","roll","roman","roof","rookie","room","rose","rotate","rough","round","route","royal","rubber","ruby","ruler","rumble","runner","runway","rustic","sacred","saddle","safari","sage","salad","salmon","saloon","salt","salute","sample","sandal","sapphire","satin","saturn","sauce","sauna","savanna","saving","scale","scarf","scenic","schedule","school","science","scissors","scooter","scope","score","scout","scramble","screen","script","scroll","sculpture","seagull","seal","season","second","sector","secure","sediment","seedling","segment","seldom","select","senior","sensor","sequoia","serene","series","servant","session","settle","shadow","shallow","shard","share","shark","shawl","shelf","shelter","sheriff","shield","shine","ship","shirt","shoal","shore","short","shoulder","shovel","shower","shrimp","shrub","sierra","signal","silent","silicon","silk","silver","simple","siren","situate","sketch","skill","skirt","sky","slalom","slate","sled","sleep","sleeve","slender","slice","slide","slope","small","smart","smile","smoke","smooth","snake","snow","social","socket","sodium","soft","solar","soldier","solid","solution","sonata","sonic","soothe","sorbet","sound","source","south","souvenir","soybean","space","spade","spark","sparrow","spatula","special","species","sphere","spice","spider","spinach","spiral","spirit","splash","sponge","spoon","sport","spot","sprout","spruce","square","squash","stable","stadium","staff","stage","stair","stall","stamp","stand","staple","starch","star","static","station","status","steam","steel","stem","stereo","sterling","stitch","stock","stone","stool","storm","story","stove","straw","stream","street","strong","studio","study","stuff","stumble","sturdy","style","subject","submit","subtle","suburb","subway","succeed","sudden","suffer","sugar","suggest","summer","summit","sunset","sunshine","super","supply","support","supreme","surface","surge","surplus","survey","survive","suspend","sustain","swallow","swamp","sweater","swift","swing","switch","sword","symbol","syntax","system","table","tablet","tackle","tactic","tailor","talent","tamale","tank","tapestry","target","tavern","teacher","teapot","technic","tempo","tenant","tender","tennis","tension","terrace","terrain","terrier","textile","texture","thank","theater","theme","theory","thicket","thimble","thirst","thirty","thistle","thomas","thorough","thought","thread","thrive","throne","thumb","thunder","ticket","tidal","tiger","timber","timely","tissue","titan","toast","tobacco","toffee","toggle","token","tomato","tomorrow","tone","tool","topaz","topic","torch","torrent","total","toucan","touch","tourist","toward","tower","town","trace","track","trade","traffic","trail","trainer","trait","transit","travel","tray","treat","tremble","trial","triangle","tribute","trick","trilogy","trinket","trout","trophy","tropic","trouble","truck","truffle","trumpet","trust","truth","tulip","tumble","tundra","tunnel","turbine","turkey","turn","turtle","tusk","tutor","twelve","twilight","twist","ultra","umbrella","uncle","under","unfold","uniform","unique","unite","unity","universe","unlock","until","update","upgrade","uphill","upload","upper","upset","urban","urgent","usable","useful","usual","utility","vacuum","valley","value","valve","vanilla","vantage","vapor","variant","various","vault","vector","velvet","vendor","venture","venue","verbal","verdict","verify","vermont","version","vertical","vessel","vest","veteran","viable","vibrant","video","viewpoint","vigor","village","vintage","vinyl","viola","violet","violin","virtue","vision","visit","visual","vital","vivid","vocal","volcano","voltage","volume","voyage","wafer","wagon","wait","walnut","walrus","wander","warranty","watch","waterfall","wax","way","wealth","weapon","weasel","weather","weave","website","wedge","welcome","whale","wheat","wheel","whisk","whisper","whistle","white","widget","wild","willow","wind","window","winter","wisdom","wise","wonder","wood","wool","world","worthy","wrap","wren","wrench","wrinkle","wrist","writing","yacht","yak","yarn","year","yellow","yield","yoga","yogurt","young","zebra","zenith","zeal","zephyr","zinc","zircon","zone","zucchini"];
-
-const $ = id => document.getElementById(id);
-const out = $("output");
-
-function randInt(max) {
-  const buf = new Uint32Array(1);
-  const limit = Math.floor(0x100000000 / max) * max;
-  let x;
-  do { crypto.getRandomValues(buf); x = buf[0]; } while (x >= limit);
-  return x % max;
-}
-
-function pick(arr) { return arr[randInt(arr.length)]; }
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = randInt(i + 1);
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-
-function buildPassword() {
-  let upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let lower = "abcdefghijklmnopqrstuvwxyz";
-  let digits = "0123456789";
-  let symbols = "!@#$%^&*()-_=+[]{};:,.?/";
-  if ($("optNoAmb").checked) {
-    upper = upper.replace(/[IO]/g, "");
-    lower = lower.replace(/[lo]/g, "");
-    digits = digits.replace(/[01]/g, "");
-  }
-  let pool = "";
-  const groups = [];
-  if ($("optUpper").checked) { pool += upper; groups.push(upper); }
-  if ($("optLower").checked) { pool += lower; groups.push(lower); }
-  if ($("optDigits").checked) { pool += digits; groups.push(digits); }
-  if ($("optSymbols").checked) { pool += symbols; groups.push(symbols); }
-  if (!pool) { pool = lower; groups.push(lower); }
-
-  const len = +$("pwLen").value;
-  const chars = groups.map(g => pick(g));
-  while (chars.length < len) chars.push(pool[randInt(pool.length)]);
-  const pw = shuffle(chars.slice(0, len)).join("");
-  return { value: pw, entropy: len * Math.log2(pool.length) };
-}
-
-function buildPhrase() {
-  const n = +$("phWords").value;
-  const sep = $("phSep").value;
-  const cap = $("phCap").checked;
-  let words = [];
-  for (let i = 0; i < n; i++) {
-    let w;
-    do { w = WORDS[randInt(WORDS.length)]; } while (words.includes(w));
-    words.push(cap ? w[0].toUpperCase() + w.slice(1) : w);
-  }
-  let phrase = words.join(sep);
-  let entropy = n * Math.log2(WORDS.length);
-  if ($("phNumber").checked) {
-    phrase += sep + String(randInt(10000)).padStart(4, "0");
-    entropy += Math.log2(10000);
-  }
-  return { value: phrase, entropy };
-}
-
-let last = null;
-
-function rate(entropy) {
-  if (entropy < 40) return { label: "Weak", color: "var(--bad)", pct: 25 };
-  if (entropy < 60) return { label: "Fair", color: "var(--warn)", pct: 50 };
-  if (entropy < 80) return { label: "Strong", color: "var(--good)", pct: 75 };
-  return { label: "Excellent", color: "var(--good)", pct: 100 };
-}
-
-function render(res) {
-  last = res;
-  out.textContent = res.value;
-  const r = rate(res.entropy);
-  const fill = $("strengthFill");
-  fill.style.width = r.pct + "%";
-  fill.style.background = r.color;
-  $("strengthLabel").textContent = "Strength: " + r.label;
-  $("entropyLabel").textContent = "~" + Math.round(res.entropy) + " bits of entropy";
-}
-
-function generate() {
-  render($("tabPhrase").classList.contains("active") ? buildPhrase() : buildPassword());
-}
-
-let mode = "password";
-function setMode(m) {
-  mode = m;
-  $("tabPassword").classList.toggle("active", m === "password");
-  $("tabPhrase").classList.toggle("active", m === "phrase");
-  $("panelPassword").classList.toggle("active", m === "password");
-  $("panelPhrase").classList.toggle("active", m === "phrase");
-  generate();
-}
-
-$("tabPassword").addEventListener("click", () => setMode("password"));
-$("tabPhrase").addEventListener("click", () => setMode("phrase"));
-$("regenBtn").addEventListener("click", generate);
-
-$("pwLen").addEventListener("input", e => { $("pwLenVal").textContent = e.target.value; generate(); });
-$("phWords").addEventListener("input", e => { $("phWordsVal").textContent = e.target.value; generate(); });
-["optUpper","optLower","optDigits","optSymbols","optNoAmb"].forEach(id => $(id).addEventListener("change", generate));
-["phSep","phNumber","phCap"].forEach(id => $(id).addEventListener("change", generate));
-
-$("copyBtn").addEventListener("click", async () => {
-  if (!last) return;
-  try { await navigator.clipboard.writeText(last.value); } catch {
-    const ta = document.createElement("textarea");
-    ta.value = last.value;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand("copy");
-    ta.remove();
-  }
-  const btn = $("copyBtn");
-  btn.textContent = "Copied!";
-  btn.classList.add("copied");
-  setTimeout(() => { btn.textContent = "Copy"; btn.classList.remove("copied"); }, 1200);
-});
-
-generate();
-</script>
+<script type="module" src="ui.js"></script>
 </body>
 </html>
